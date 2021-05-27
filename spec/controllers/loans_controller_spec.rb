@@ -9,11 +9,16 @@ RSpec.describe LoansController, type: :controller do
   end
 
   describe '#show' do
-    let(:loan) { Loan.create!(funded_amount: 100.0) }
+    let(:payment) { Loan.create!(amount: -100.0, transacted_on: Date.today) }
 
     it 'responds with a 200' do
-      get :show, params: { id: loan.id }
+      get :show, params: { id: payment.id }
       expect(response).to have_http_status(:ok)
+    end
+
+    it 'should have the amount_due' do
+      get :show, params: { id: payment.id }
+      expect(JSON.parse(response.body).keys).to include('amount_due')
     end
 
     context 'if the loan is not found' do
